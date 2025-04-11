@@ -1,0 +1,6 @@
+@SentinelaDocumentos.Api_HostAddress = http://localhost:5276
+
+GET {{SentinelaDocumentos.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
