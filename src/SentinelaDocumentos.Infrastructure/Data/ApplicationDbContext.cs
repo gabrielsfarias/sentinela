@@ -6,16 +6,11 @@ using SentinelaDocumentos.Domain.Entities; // Namespace das suas entidades
 namespace SentinelaDocumentos.Infrastructure.Data;
 
 // Herda de IdentityDbContext para incluir tabelas do Identity (Users, Roles, etc.)
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {
     // Mapeia suas entidades para tabelas no banco
     public DbSet<TipoDocumento> TiposDocumento { get; set; }
     public DbSet<DocumentoEmpresa> DocumentosEmpresa { get; set; }
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
