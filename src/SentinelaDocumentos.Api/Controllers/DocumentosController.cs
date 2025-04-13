@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SentinelaDocumentos.Application.DTOs.Documento;
 using SentinelaDocumentos.Application.Interfaces;
 using SentinelaDocumentos.Domain.Entities;
-using System.Threading.Tasks;
 
 namespace SentinelaDocumentos.Api.Controllers
 {

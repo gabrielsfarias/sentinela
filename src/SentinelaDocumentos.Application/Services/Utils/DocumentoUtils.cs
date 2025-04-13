@@ -1,5 +1,3 @@
-using System;
-
 namespace SentinelaDocumentos.Application.Services.Utils
 {
     public static class DocumentoUtils

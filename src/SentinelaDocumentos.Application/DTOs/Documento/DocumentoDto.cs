@@ -1,5 +1,3 @@
-using System;
-
 namespace SentinelaDocumentos.Application.DTOs.Documento
 {
     public class DocumentoDto

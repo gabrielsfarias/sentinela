@@ -8,7 +8,7 @@ public class EfTipoDocumentoRepository(ApplicationDbContext context) : ITipoDocu
 {
     public async Task<IEnumerable<TipoDocumento>> ListarTodosAsync()
     {
-        return await context.TiposDocumento.AsNoTracking().ToListAsync();
+        return await context.TiposDocumento.AsNoTracking().OrderBy(t => t.Nome).ToListAsync();
     }
 
     public async Task<TipoDocumento?> ObterPorIdAsync(int id)
