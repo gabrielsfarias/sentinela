@@ -11,20 +11,11 @@ namespace SentinelaDocumentos.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class DocumentosController : ControllerBase
+    public class DocumentosController(IDocumentoAppService documentoAppService, UserManager<ApplicationUser> userManager) : ControllerBase
     {
-        private readonly IDocumentoAppService _documentoAppService;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public DocumentosController(IDocumentoAppService documentoAppService, UserManager<ApplicationUser> userManager)
-        {
-            _documentoAppService = documentoAppService;
-            _userManager = userManager;
-        }
-
         private string GetUserId()
         {
-            var userId = _userManager.GetUserId(User);
+            var userId = userManager.GetUserId(User);
             if (string.IsNullOrEmpty(userId))
             {
                 throw new UnauthorizedAccessException("Usuário não autenticado.");
@@ -36,7 +27,7 @@ namespace SentinelaDocumentos.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CriarDocumentoDto documentoDto)
         {
             var userId = GetUserId();
-            var result = await _documentoAppService.AdicionarDocumentoAsync(documentoDto, userId);
+            var result = await documentoAppService.AdicionarDocumentoAsync(documentoDto, userId);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
@@ -44,7 +35,7 @@ namespace SentinelaDocumentos.Api.Controllers
         public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var userId = GetUserId();
-            var result = await _documentoAppService.ListarDocumentosAsync(userId, page, pageSize);
+            var result = await documentoAppService.ListarDocumentosAsync(userId, page, pageSize);
             return Ok(result);
         }
 
@@ -52,7 +43,7 @@ namespace SentinelaDocumentos.Api.Controllers
         public async Task<IActionResult> GetById(long id)
         {
             var userId = GetUserId();
-            var result = await _documentoAppService.ObterDetalhesDocumentoAsync(id, userId);
+            var result = await documentoAppService.ObterDetalhesDocumentoAsync(id, userId);
             if (result == null)
                 return NotFound();
 
@@ -63,7 +54,7 @@ namespace SentinelaDocumentos.Api.Controllers
         public async Task<IActionResult> Update(long id, [FromBody] AtualizarDocumentoDto documentoDto)
         {
             var userId = GetUserId();
-            await _documentoAppService.AtualizarDocumentoAsync(documentoDto, userId);
+            await documentoAppService.AtualizarDocumentoAsync(documentoDto, userId);
             return NoContent();
         }
 
@@ -71,7 +62,7 @@ namespace SentinelaDocumentos.Api.Controllers
         public async Task<IActionResult> Delete(long id)
         {
             var userId = GetUserId();
-            await _documentoAppService.DesativarDocumentoAsync(id, userId);
+            await documentoAppService.DesativarDocumentoAsync(id, userId);
             return NoContent();
         }
     }
