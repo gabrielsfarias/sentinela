@@ -5,6 +5,9 @@ namespace SentinelaDocumentos.Application.DTOs.Documento
 {
     public class AtualizarDocumentoDto
     {
+        [Required]
+        public long Id { get; set; }
+
         [StringLength(100)]
         public string? OrgaoEmissor { get; set; }
 
