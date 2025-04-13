@@ -27,7 +27,12 @@ namespace SentinelaDocumentos.Api.Controllers
         {
             var userId = GetUserId();
             var result = await documentoAppService.AdicionarDocumentoAsync(documentoDto, userId);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            var createdDocument = result.FirstOrDefault();
+            if (createdDocument == null)
+            {
+                return BadRequest("Documento não pôde ser criado.");
+            }
+            return CreatedAtAction(nameof(GetById), new { id = createdDocument.Id }, createdDocument);
         }
 
         [HttpGet]
