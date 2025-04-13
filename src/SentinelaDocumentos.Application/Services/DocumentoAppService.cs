@@ -9,7 +9,7 @@ namespace SentinelaDocumentos.Application.Services
 {
     public class DocumentoAppService(IDocumentoEmpresaRepository docRepo, ITipoDocumentoRepository tipoRepo, IMapper mapper) : IDocumentoAppService
     {
-        public async Task<DocumentoDto> AdicionarDocumentoAsync(CriarDocumentoDto dto, string usuarioId)
+        public async Task<IEnumerable<DocumentoDto>> AdicionarDocumentoAsync(CriarDocumentoDto dto, string usuarioId)
         {
             // Validação do DTO e verificação do TipoDocumentoId diretamente
             if (await tipoRepo.ObterPorIdAsync(dto.TipoDocumentoId) == null)
@@ -23,21 +23,19 @@ namespace SentinelaDocumentos.Application.Services
             await docRepo.AdicionarAsync(documento);
 
             // Mapear entidade salva para DTO e retornar
-            return mapper.Map<DocumentoDto>(documento);
+            return (IEnumerable<DocumentoDto>)mapper.Map<DocumentoDto>(documento);
         }
 
         public async Task<IEnumerable<DocumentoDto>> ListarDocumentosAsync(string usuarioId, int page, int pageSize)
         {
             var documentos = await docRepo.ListarPorUsuarioAsync(usuarioId);
-            // Paginação manual
             documentos = documentos.Skip((page - 1) * pageSize).Take(pageSize);
 
             var dtos = mapper.Map<IEnumerable<DocumentoDto>>(documentos);
 
             foreach (var dto in dtos)
             {
-                dto.DiasParaVencer = (dto.DataValidade - DateTime.UtcNow).Days;
-                dto.Status = DocumentoUtils.CalcularStatusDocumento(dto.DataValidade);
+                DocumentoUtils.CalcularDetalhes(dto);
             }
 
             return dtos;
@@ -45,10 +43,11 @@ namespace SentinelaDocumentos.Application.Services
 
         public async Task<DocumentoDto> ObterDetalhesDocumentoAsync(long id, string usuarioId)
         {
-            var documento = await docRepo.ObterPorIdEUsuarioAsync(id, usuarioId) ?? throw new Exception("Documento não encontrado.");
+            var documento = await docRepo.ObterPorIdEUsuarioAsync(id, usuarioId) 
+                ?? throw new Exception("Documento não encontrado.");
+            
             var dto = mapper.Map<DocumentoDto>(documento);
-            dto.DiasParaVencer = (dto.DataValidade - DateTime.UtcNow).Days;
-            dto.Status = DocumentoUtils.CalcularStatusDocumento(dto.DataValidade);
+            DocumentoUtils.CalcularDetalhes(dto);
 
             return dto;
         }
@@ -66,32 +65,22 @@ namespace SentinelaDocumentos.Application.Services
             await docRepo.DesativarAsync(documento);
         }
 
-        Task<DocumentoDto> IDocumentoAppService.AdicionarDocumentoAsync(CriarDocumentoDto dto, string usuarioId)
-        {
-            throw new NotImplementedException();
-        }
-
         Task<IEnumerable<DocumentoDto>> IDocumentoAppService.ListarDocumentosAsync(string usuarioId, int page, int pageSize)
         {
             throw new NotImplementedException();
         }
 
-        Task<DocumentoDto> IDocumentoAppService.ObterDetalhesDocumentoAsync(long id, string usuarioId)
+        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.ObterDetalhesDocumentoAsync(long id, string usuarioId)
         {
             throw new NotImplementedException();
         }
 
-        Task IDocumentoAppService.AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
+        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
         {
             throw new NotImplementedException();
         }
 
-        Task IDocumentoAppService.DesativarDocumentoAsync(long id, string usuarioId)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task IDocumentoAppService.AdicionarDocumentoAsync(DocumentoDto documentoDto, string? userId)
+        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.DesativarDocumentoAsync(long id, string usuarioId)
         {
             throw new NotImplementedException();
         }
