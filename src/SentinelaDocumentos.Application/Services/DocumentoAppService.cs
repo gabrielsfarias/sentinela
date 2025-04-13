@@ -8,6 +8,7 @@ using SentinelaDocumentos.Application.DTOs.Documento;
 using SentinelaDocumentos.Application.Interfaces;
 using SentinelaDocumentos.Domain.Entities;
 using SentinelaDocumentos.Domain.Interfaces;
+using SentinelaDocumentos.Application.Services.Utils;
 
 namespace SentinelaDocumentos.Application.Services
 {
@@ -55,7 +56,7 @@ namespace SentinelaDocumentos.Application.Services
             foreach (var dto in dtos)
             {
                 dto.DiasParaVencer = (dto.DataValidade - DateTime.UtcNow).Days;
-                dto.Status = CalcularStatusDocumento(dto.DataValidade);
+                dto.Status = DocumentoUtils.CalcularStatusDocumento(dto.DataValidade);
             }
 
             return dtos;
@@ -69,7 +70,7 @@ namespace SentinelaDocumentos.Application.Services
 
             var dto = _mapper.Map<DocumentoDto>(documento);
             dto.DiasParaVencer = (dto.DataValidade - DateTime.UtcNow).Days;
-            dto.Status = CalcularStatusDocumento(dto.DataValidade);
+            dto.Status = DocumentoUtils.CalcularStatusDocumento(dto.DataValidade);
 
             return dto;
         }
@@ -93,13 +94,34 @@ namespace SentinelaDocumentos.Application.Services
             await _docRepo.DesativarAsync(documento);
         }
 
-        private string CalcularStatusDocumento(DateTime dataValidade)
+        Task<DocumentoDto> IDocumentoAppService.AdicionarDocumentoAsync(CriarDocumentoDto dto, string usuarioId)
         {
-            if (dataValidade < DateTime.UtcNow)
-                return "Vencido";
-            if ((dataValidade - DateTime.UtcNow).Days <= 30)
-                return "Próximo Vencimento";
-            return "Válido";
+            throw new NotImplementedException();
+        }
+
+        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.ListarDocumentosAsync(string usuarioId, int page, int pageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<DocumentoDto> IDocumentoAppService.ObterDetalhesDocumentoAsync(long id, string usuarioId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IDocumentoAppService.AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IDocumentoAppService.DesativarDocumentoAsync(long id, string usuarioId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IDocumentoAppService.AdicionarDocumentoAsync(DocumentoDto documentoDto, string? userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

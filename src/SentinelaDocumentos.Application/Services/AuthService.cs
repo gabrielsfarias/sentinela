@@ -8,12 +8,6 @@ namespace SentinelaDocumentos.Application.Services
 {
     public class AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : IAuthService
     {
-        private const string PasswordMismatchMessage = "Passwords do not match.";
-        private const string EmailExistsMessage = "Email already exists.";
-        private const string RegistrationSuccessMessage = "User registered successfully.";
-        private const string LoginSuccessMessage = "Login successful.";
-        private const string InvalidLoginMessage = "Invalid login attempt.";
-
         public async Task<AuthResponseDto> RegistrarAsync(RegisterDto dto)
         {
             if (dto.Password != dto.ConfirmPassword)
@@ -21,7 +15,7 @@ namespace SentinelaDocumentos.Application.Services
                 return new AuthResponseDto 
                 { 
                     IsSuccess = false, 
-                    Message = PasswordMismatchMessage, 
+                    Message = "As senhas não coincidem.", 
                     Token = string.Empty, 
                     UserInfo = null 
                 };
@@ -33,7 +27,7 @@ namespace SentinelaDocumentos.Application.Services
                 return new AuthResponseDto 
                 { 
                     IsSuccess = false, 
-                    Message = EmailExistsMessage, 
+                    Message = "O email já está em uso.", 
                     Token = string.Empty, 
                     UserInfo = null 
                 };
@@ -52,8 +46,8 @@ namespace SentinelaDocumentos.Application.Services
                 return new AuthResponseDto 
                 { 
                     IsSuccess = true, 
-                    Message = RegistrationSuccessMessage, 
-                    Token = "GeneratedTokenHere", // Replace with actual token generation logic
+                    Message = "Registro realizado com sucesso.", 
+                    Token = "GeneratedTokenHere", // Substituir pela lógica real de geração de token
                     UserInfo = new UserInfoDto 
                     { 
                         Email = user.Email, 
@@ -66,8 +60,8 @@ namespace SentinelaDocumentos.Application.Services
             { 
                 IsSuccess = false, 
                 Message = string.Join(", ", result.Errors.Select(e => e.Description)), 
-                Token = string.Empty, // Provide a default or meaningful value
-                UserInfo = null // Provide a default or meaningful value
+                Token = string.Empty, 
+                UserInfo = null 
             };
         }
 
@@ -79,8 +73,8 @@ namespace SentinelaDocumentos.Application.Services
                 return new AuthResponseDto 
                 { 
                     IsSuccess = true, 
-                    Message = LoginSuccessMessage, 
-                    Token = "GeneratedTokenHere", // Replace with actual token generation logic
+                    Message = "Login realizado com sucesso.", 
+                    Token = "GeneratedTokenHere", // Substituir pela lógica real de geração de token
                     UserInfo = new UserInfoDto 
                     { 
                         Email = dto.Email, 
@@ -92,9 +86,9 @@ namespace SentinelaDocumentos.Application.Services
             return new AuthResponseDto 
             { 
                 IsSuccess = false, 
-                Message = InvalidLoginMessage, 
-                Token = string.Empty, // Provide a default or meaningful value
-                UserInfo = null // Provide a default or meaningful value
+                Message = "Credenciais inválidas.", 
+                Token = string.Empty, 
+                UserInfo = null 
             };
         }
     }

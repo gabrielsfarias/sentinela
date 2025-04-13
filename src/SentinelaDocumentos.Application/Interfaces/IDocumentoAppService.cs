@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SentinelaDocumentos.Application.DTOs.Documento;
 
 namespace SentinelaDocumentos.Application.Interfaces
@@ -11,5 +9,6 @@ namespace SentinelaDocumentos.Application.Interfaces
         Task<DocumentoDto> ObterDetalhesDocumentoAsync(long id, string usuarioId);
         Task AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId);
         Task DesativarDocumentoAsync(long id, string usuarioId);
+        Task AdicionarDocumentoAsync(DocumentoDto documentoDto, string? userId);
     }
 }

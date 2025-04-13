@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SentinelaDocumentos.Application.DTOs.Documento
 {
-    public class CriarDocumentoDto
+    public abstract class DocumentoBaseDto
     {
-        [Required]
-        public int TipoDocumentoId { get; set; }
-
         [StringLength(100)]
         public string? OrgaoEmissor { get; set; }
 
@@ -21,5 +18,11 @@ namespace SentinelaDocumentos.Application.DTOs.Documento
 
         [StringLength(500)]
         public string? Observacoes { get; set; }
+    }
+
+    public class CriarDocumentoDto : DocumentoBaseDto
+    {
+        [Required]
+        public int TipoDocumentoId { get; set; }
     }
 }
