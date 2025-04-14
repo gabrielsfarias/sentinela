@@ -41,7 +41,7 @@ namespace SentinelaDocumentos.Application.Services
             return dtos;
         }
 
-        public async Task<DocumentoDto> ObterDetalhesDocumentoAsync(long id, string usuarioId)
+        public async Task<IEnumerable<DocumentoDto>> ObterDetalhesDocumentoAsync(long id, string usuarioId)
         {
             var documento = await docRepo.ObterPorIdEUsuarioAsync(id, usuarioId) 
                 ?? throw new Exception("Documento não encontrado.");
@@ -49,7 +49,7 @@ namespace SentinelaDocumentos.Application.Services
             var dto = mapper.Map<DocumentoDto>(documento);
             DocumentoUtils.CalcularDetalhes(dto);
 
-            return dto;
+            return (IEnumerable<DocumentoDto>)dto;
         }
 
         public async Task AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
@@ -59,20 +59,14 @@ namespace SentinelaDocumentos.Application.Services
             await docRepo.AtualizarAsync(documento);
         }
 
-        public async Task DesativarDocumentoAsync(long id, string usuarioId)
+        async Task<IEnumerable<DocumentoDto>> IDocumentoAppService.DesativarDocumentoAsync(long id, string usuarioId)
         {
             var documento = await docRepo.ObterPorIdEUsuarioAsync(id, usuarioId) ?? throw new Exception("Documento não encontrado ou não pertence ao usuário.");
             await docRepo.DesativarAsync(documento);
-        }
 
-        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.ListarDocumentosAsync(string usuarioId, int page, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.ObterDetalhesDocumentoAsync(long id, string usuarioId)
-        {
-            throw new NotImplementedException();
+            // Retorna a lista atualizada de documentos do usuário
+            var documentosAtualizados = await docRepo.ListarPorUsuarioAsync(usuarioId);
+            return mapper.Map<IEnumerable<DocumentoDto>>(documentosAtualizados);
         }
 
         Task<IEnumerable<DocumentoDto>> IDocumentoAppService.AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
@@ -80,9 +74,6 @@ namespace SentinelaDocumentos.Application.Services
             throw new NotImplementedException();
         }
 
-        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.DesativarDocumentoAsync(long id, string usuarioId)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

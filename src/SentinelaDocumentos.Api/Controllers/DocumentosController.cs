@@ -66,8 +66,8 @@ namespace SentinelaDocumentos.Api.Controllers
         public async Task<IActionResult> Delete(long id)
         {
             var userId = GetUserId();
-            await documentoAppService.DesativarDocumentoAsync(id, userId);
-            return NoContent();
+            var documentosAtualizados = await documentoAppService.DesativarDocumentoAsync(id, userId);
+            return Ok(documentosAtualizados); // Retorna a lista atualizada de documentos
         }
     }
 }
