@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SentinelaDocumentos.Application.DTOs.Auth;
 using SentinelaDocumentos.Application.Interfaces;
 using SentinelaDocumentos.Domain.Entities;
@@ -6,12 +7,13 @@ using SentinelaDocumentos.Application.DTOs.User;
 
 namespace SentinelaDocumentos.Application.Services
 {
-    public class AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager) : IAuthService
+    public class AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AuthService> logger) : IAuthService
     {
         public async Task<AuthResponseDto> RegistrarAsync(RegisterDto dto)
         {
             if (dto.Password != dto.ConfirmPassword)
             {
+                logger.LogWarning("Tentativa de registro com senhas não coincidentes para o email {Email}", dto.Email);
                 return new AuthResponseDto 
                 { 
                     IsSuccess = false, 
@@ -24,6 +26,7 @@ namespace SentinelaDocumentos.Application.Services
             var existingUser = await userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
             {
+                logger.LogWarning("Tentativa de registro com email já existente: {Email}", dto.Email);
                 return new AuthResponseDto 
                 { 
                     IsSuccess = false, 

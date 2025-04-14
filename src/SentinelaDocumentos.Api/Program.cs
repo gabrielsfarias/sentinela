@@ -17,8 +17,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ITipoDocumentoRepository, EfTipoDocumentoRepository>();
 builder.Services.AddScoped<IDocumentoEmpresaRepository, EfDocumentoEmpresaRepository>();
-builder.Services.AddScoped<ITipoDocumentoRepository, EfTipoDocumentoRepository>();
-builder.Services.AddScoped<IDocumentoEmpresaRepository, EfDocumentoEmpresaRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDocumentoAppService, DocumentoAppService>();
 

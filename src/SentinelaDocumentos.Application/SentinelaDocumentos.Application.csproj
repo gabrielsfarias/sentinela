@@ -7,7 +7,8 @@
   </PropertyGroup>
   
 <ItemGroup>
-    <ProjectReference Include="..\SentinelaDocumentos.Domain\SentinelaDocumentos.Domain.csproj" />
+    <!-- Mantendo apenas a referência para Domain -->
+    <ProjectReference Include="../SentinelaDocumentos.Domain/SentinelaDocumentos.Domain.csproj" />
   </ItemGroup>
   
 <ItemGroup>

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../SentinelaDocumentos.Application/SentinelaDocumentos.Application.csproj" />
+    <!-- Removendo referência cruzada para Application -->
+    <!-- <ProjectReference Include="../SentinelaDocumentos.Application/SentinelaDocumentos.Application.csproj" /> -->
   </ItemGroup>
 </Project>

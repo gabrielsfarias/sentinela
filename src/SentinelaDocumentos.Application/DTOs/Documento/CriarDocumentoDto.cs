@@ -7,9 +7,6 @@ namespace SentinelaDocumentos.Application.DTOs.Documento
         [StringLength(100)]
         public string? OrgaoEmissor { get; set; }
 
-        [StringLength(50)]
-        public string? NumeroDocumento { get; set; }
-
         public DateTime? DataEmissao { get; set; }
 
         [Required]
@@ -23,5 +20,8 @@ namespace SentinelaDocumentos.Application.DTOs.Documento
     {
         [Required]
         public int TipoDocumentoId { get; set; }
+
+        [StringLength(50, ErrorMessage = "O número do documento não pode exceder 50 caracteres.")]
+        public string? NumeroDocumento { get; set; }
     }
 }
