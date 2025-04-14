@@ -55,4 +55,4 @@ nunit-*.xml
 
 .github
 **/*.http
-**/*.db
+**/*.db*
