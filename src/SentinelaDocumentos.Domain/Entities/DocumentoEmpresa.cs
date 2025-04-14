@@ -17,7 +17,7 @@ public class DocumentoEmpresa
     [ForeignKey("TipoDocumentoId")]
     public virtual TipoDocumento TipoDocumento { get; set; } = null!;
 
-       [StringLength(150)]
+    [StringLength(150)]
     public string? OrgaoEmissor { get; set; }
 
     [StringLength(100)]
@@ -38,4 +38,7 @@ public class DocumentoEmpresa
 
     public DateTime? DataUltimoAlertaEnviado { get; set; } // Controle para não enviar alertas repetidos
 
+    public string Status => DateTime.UtcNow > DataValidade ? "Expirado" : "Válido";
+
+    public int DiasParaVencer => (DataValidade - DateTime.UtcNow).Days;
 }

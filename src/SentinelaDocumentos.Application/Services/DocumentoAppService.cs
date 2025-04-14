@@ -23,7 +23,7 @@ namespace SentinelaDocumentos.Application.Services
             await docRepo.AdicionarAsync(documento);
 
             // Mapear entidade salva para DTO e retornar
-            return (IEnumerable<DocumentoDto>)mapper.Map<DocumentoDto>(documento);
+            return new List<DocumentoDto> { mapper.Map<DocumentoDto>(documento) };
         }
 
         public async Task<IEnumerable<DocumentoDto>> ListarDocumentosAsync(string usuarioId, int page, int pageSize)
@@ -52,11 +52,20 @@ namespace SentinelaDocumentos.Application.Services
             return (IEnumerable<DocumentoDto>)dto;
         }
 
-        public async Task AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
+        async Task<IEnumerable<DocumentoDto>> IDocumentoAppService.AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
         {
             var documento = await docRepo.ObterPorIdEUsuarioAsync(dto.Id, usuarioId) ?? throw new Exception("Documento não encontrado ou não pertence ao usuário.");
             mapper.Map(dto, documento);
             await docRepo.AtualizarAsync(documento);
+
+            // Retorna o documento atualizado como DTO
+            var documentoAtualizado = await docRepo.ObterPorIdEUsuarioAsync(dto.Id, usuarioId);
+            if (documentoAtualizado == null)
+            {
+                throw new Exception("Erro ao atualizar o documento: documento não encontrado após a atualização.");
+            }
+
+            return mapper.Map<IEnumerable<DocumentoDto>>(new List<DocumentoEmpresa> { documentoAtualizado });
         }
 
         async Task<IEnumerable<DocumentoDto>> IDocumentoAppService.DesativarDocumentoAsync(long id, string usuarioId)
@@ -68,12 +77,6 @@ namespace SentinelaDocumentos.Application.Services
             var documentosAtualizados = await docRepo.ListarPorUsuarioAsync(usuarioId);
             return mapper.Map<IEnumerable<DocumentoDto>>(documentosAtualizados);
         }
-
-        Task<IEnumerable<DocumentoDto>> IDocumentoAppService.AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)
-        {
-            throw new NotImplementedException();
-        }
-
         
     }
 }

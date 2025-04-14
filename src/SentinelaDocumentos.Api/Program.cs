@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SentinelaDocumentos.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using SentinelaDocumentos.Domain.Entities;
+using SentinelaDocumentos.Application.Services.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDocumentoAppService, DocumentoAppService>();
 
 // Adicionando o AutoMapper ao contêiner de serviços
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 // Configurando o ApplicationDbContext para usar SQLite no ambiente de desenvolvimento
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
