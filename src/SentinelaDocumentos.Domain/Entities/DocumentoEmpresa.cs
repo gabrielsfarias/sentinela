@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SentinelaDocumentos.Application.Services.Utils;
 
 namespace SentinelaDocumentos.Domain.Entities;
 
@@ -38,7 +39,7 @@ public class DocumentoEmpresa
 
     public DateTime? DataUltimoAlertaEnviado { get; set; } // Controle para não enviar alertas repetidos
 
-    public string Status => DateTime.UtcNow > DataValidade ? "Expirado" : "Válido";
+    public string Status => DocumentoUtils.CalcularStatusDocumento(DataValidade);
 
     public int DiasParaVencer => (DataValidade - DateTime.UtcNow).Days;
 }
