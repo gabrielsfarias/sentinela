@@ -29,7 +29,6 @@ public class EfDocumentoEmpresaRepository(ApplicationDbContext context) : IDocum
 
         return await FiltrarDocumentosAtivos(usuarioId)
             .Include(d => d.TipoDocumento)
-            .AsNoTracking()
             .FirstOrDefaultAsync(d => d.Id == id);
     }
 
@@ -56,7 +55,6 @@ public class EfDocumentoEmpresaRepository(ApplicationDbContext context) : IDocum
     public async Task AtualizarAsync(DocumentoEmpresa documento)
     {
         ArgumentNullException.ThrowIfNull(documento);
-        
         context.Entry(documento).State = EntityState.Modified;
         await context.SaveChangesAsync();
     }

@@ -59,12 +59,7 @@ namespace SentinelaDocumentos.Application.Services
             await docRepo.AtualizarAsync(documento);
 
             // Retorna o documento atualizado como DTO
-            var documentoAtualizado = await docRepo.ObterPorIdEUsuarioAsync(dto.Id, usuarioId);
-            if (documentoAtualizado == null)
-            {
-                throw new Exception("Erro ao atualizar o documento: documento não encontrado após a atualização.");
-            }
-
+            var documentoAtualizado = await docRepo.ObterPorIdEUsuarioAsync(dto.Id, usuarioId) ?? throw new Exception("Erro ao atualizar o documento: documento não encontrado após a atualização.");
             return mapper.Map<IEnumerable<DocumentoDto>>(new List<DocumentoEmpresa> { documentoAtualizado });
         }
 
