@@ -53,6 +53,5 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
-.github
 **/*.http
 **/*.db*
