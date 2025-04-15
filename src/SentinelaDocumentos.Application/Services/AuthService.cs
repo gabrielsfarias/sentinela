@@ -7,7 +7,7 @@ using SentinelaDocumentos.Application.DTOs.User;
 
 namespace SentinelaDocumentos.Application.Services
 {
-    public class AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AuthService> logger) : IAuthService
+    public class AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AuthService> logger, JwtService jwtService) : IAuthService
     {
         public async Task<AuthResponseDto> RegistrarAsync(RegisterDto dto)
         {
@@ -23,8 +23,8 @@ namespace SentinelaDocumentos.Application.Services
                 };
             }
 
-            var existingUser = await userManager.FindByEmailAsync(dto.Email);
-            if (existingUser != null)
+            var usuarioExistente = await userManager.FindByEmailAsync(dto.Email);
+            if (usuarioExistente != null)
             {
                 logger.LogWarning("Tentativa de registro com email já existente: {Email}", dto.Email);
                 return new AuthResponseDto 
@@ -46,11 +46,12 @@ namespace SentinelaDocumentos.Application.Services
             var result = await userManager.CreateAsync(user, dto.Password);
             if (result.Succeeded)
             {
+                var token = jwtService.GerarToken(user);
                 return new AuthResponseDto 
                 { 
                     IsSuccess = true, 
                     Message = "Registro realizado com sucesso.", 
-                    Token = "GeneratedTokenHere", // Substituir pela lógica real de geração de token
+                    Token = token,
                     UserInfo = new UserInfoDto 
                     { 
                         Email = user.Email, 
@@ -72,19 +73,31 @@ namespace SentinelaDocumentos.Application.Services
         {
             var result = await signInManager.PasswordSignInAsync(dto.Email, dto.Password, isPersistent: false, lockoutOnFailure: false);
             if (result.Succeeded)
-            {
-                return new AuthResponseDto 
-                { 
-                    IsSuccess = true, 
-                    Message = "Login realizado com sucesso.", 
-                    Token = "GeneratedTokenHere", // Substituir pela lógica real de geração de token
-                    UserInfo = new UserInfoDto 
+                {
+                    var user = await userManager.FindByEmailAsync(dto.Email);
+                    if (user != null)
+                    {
+                        var token = jwtService.GerarToken(user);
+                        return new AuthResponseDto 
+                        { 
+                            IsSuccess = true, 
+                            Message = "Login realizado com sucesso.", 
+                            Token = token, 
+                            UserInfo = new UserInfoDto 
+                            { 
+                                Email = user.Email, 
+                                UserName = user.UserName 
+                            } 
+                        };
+                    }
+                    return new AuthResponseDto 
                     { 
-                        Email = dto.Email, 
-                        UserName = dto.Email 
-                    } 
-                };
-            }
+                        IsSuccess = false, 
+                        Message = "Usuário não encontrado.", 
+                        Token = string.Empty, 
+                        UserInfo = null 
+                    };
+                }
 
             return new AuthResponseDto 
             { 
