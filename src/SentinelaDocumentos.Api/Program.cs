@@ -7,7 +7,6 @@ using SentinelaDocumentos.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using SentinelaDocumentos.Domain.Entities;
 using SentinelaDocumentos.Application.Services.Utils;
-using SentinelaDocumentos.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +42,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITipoDocumentoRepository, EfTipoDocumentoRepository>();
 builder.Services.AddScoped<IDocumentoEmpresaRepository, EfDocumentoEmpresaRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();

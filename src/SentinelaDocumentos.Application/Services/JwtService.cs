@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SentinelaDocumentos.Domain.Entities;
 
-namespace SentinelaDocumentos.Api.Services;
+namespace SentinelaDocumentos.Application.Services;
 
 public class JwtService(IOptions<JwtSettings> jwtSettings)
 {
