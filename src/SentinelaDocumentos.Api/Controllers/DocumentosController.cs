@@ -58,7 +58,10 @@ namespace SentinelaDocumentos.Api.Controllers
         public async Task<IActionResult> Update(long id, [FromBody] AtualizarDocumentoDto documentoDto)
         {
             var userId = GetUserId();
-            await documentoAppService.AtualizarDocumentoAsync(documentoDto, userId);
+            documentoDto.Id = id; // id vem da rota
+            var result = await documentoAppService.AtualizarDocumentoAsync(documentoDto, userId);
+            if (!result.Any())
+                return NotFound();
             return NoContent();
         }
 

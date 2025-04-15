@@ -49,7 +49,7 @@ namespace SentinelaDocumentos.Application.Services
             var dto = mapper.Map<DocumentoDto>(documento);
             DocumentoUtils.CalcularDetalhes(dto);
 
-            return new List<DocumentoDto> { dto };
+            return [dto];
         }
 
         async Task<IEnumerable<DocumentoDto>> IDocumentoAppService.AtualizarDocumentoAsync(AtualizarDocumentoDto dto, string usuarioId)

@@ -11,10 +11,13 @@ namespace SentinelaDocumentos.Application.Services.Utils
             CreateMap<CriarDocumentoDto, DocumentoEmpresa>()
                 .ForMember(dest => dest.TipoDocumentoId, opt => opt.MapFrom(src => src.TipoDocumentoId));
 
-            // E os outros CreateMap que você adicionou...
-            CreateMap<AtualizarDocumentoDto, DocumentoEmpresa>();
+            CreateMap<AtualizarDocumentoDto, DocumentoEmpresa>()
+                .ForMember(dest => dest.TipoDocumentoId, opt => opt.MapFrom(src => src.TipoDocumentoId));
+                
             CreateMap<DocumentoEmpresa, DocumentoDto>()
-                .ForMember(dest => dest.NomeTipoDocumento, opt => opt.MapFrom(src => src.TipoDocumento != null ? src.TipoDocumento.Nome : string.Empty));
+                .ForMember(dest => dest.NomeTipoDocumento, 
+                    opt => opt.MapFrom(src => src.TipoDocumento != null ? src.TipoDocumento.Nome : string.Empty));
+                    
             CreateMap<TipoDocumento, TipoDocumentoDto>();
         }
     }
