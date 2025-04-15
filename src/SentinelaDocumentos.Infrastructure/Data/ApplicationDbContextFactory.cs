@@ -39,7 +39,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         if (string.IsNullOrEmpty(connectionString))
         {
             // Fallback se não encontrar connection string (ou defina um valor padrão aqui)
-            connectionString = "Data Source=sentinela_design.db"; // Um fallback para design time
+            connectionString = "Data Source=./sentinela_dev.db"; // Um fallback para design time
              Console.WriteLine($"AVISO: ConnectionString 'DefaultConnection' não encontrada. Usando fallback: {connectionString}");
         }
          else
