@@ -7,6 +7,12 @@ export interface LoginCredentials {
   password?: string;
 }
 
+export interface ChangePasswordData {
+    currentPassword?: string;
+    newPassword?: string;
+    confirmNewPassword?: string;
+}
+
 export interface RegisterData {
   email?: string;
   password?: string;
@@ -91,4 +97,12 @@ export const resetPassword = async (data: ResetPasswordData): Promise<SimpleMess
 // Chamado no logout no AuthContext
 export const clearAuthToken = () => {
   setAuthToken(null);
+};
+
+export const changePassword = async (data: ChangePasswordData): Promise<SimpleMessageResponse> => {
+    // O backend não espera confirmNewPassword
+    const payload = { currentPassword: data.currentPassword, newPassword: data.newPassword };
+    // O token JWT já deve estar nos headers do axios (configurado pelo setAuthToken)
+    const response = await axios.post<SimpleMessageResponse>(`${API_URL_PREFIX}/account/change-password`, payload);
+    return response.data;
 };

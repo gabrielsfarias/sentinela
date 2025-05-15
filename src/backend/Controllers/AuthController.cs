@@ -1,4 +1,5 @@
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization; // Adicionar para [Authorize]
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -9,24 +10,18 @@ using System.Text;
 namespace Backend.Controllers;
 
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController(
+    UserManager<IdentityUser> userManager,
+    SignInManager<IdentityUser> signInManager,
+    IConfiguration configuration,
+    ILogger<AuthController> logger) : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<AuthController> _logger; // Adicionado para logging
+    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly SignInManager<IdentityUser> _signInManager = signInManager;
+    private readonly IConfiguration _configuration = configuration;
+    private readonly ILogger<AuthController> _logger = logger;
 
-    public AuthController(
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager,
-        IConfiguration configuration,
-        ILogger<AuthController> logger) // Adicionado para logging
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _configuration = configuration;
-        _logger = logger; // Adicionado para logging
-    }
+    // ... Register, Login, ForgotPassword, ResetPassword (sem alterações) ...
 
     [HttpPost("/cadastro")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -78,15 +73,9 @@ public class AuthController : ControllerBase
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
-            // Adicionar roles se você as usar no futuro
-            // var userRoles = await _userManager.GetRolesAsync(user);
-            // foreach (var userRole in userRoles)
-            // {
-            //     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            // }
 
             var jwtSecret = _configuration["JWT:Secret"];
-            if (string.IsNullOrEmpty(jwtSecret) || jwtSecret.Length < 32) // Boa prática verificar o tamanho
+            if (string.IsNullOrEmpty(jwtSecret) || jwtSecret.Length < 32)
             {
                 _logger.LogError("JWT Secret não está configurada corretamente ou é muito curta.");
                 throw new InvalidOperationException("Configuração de segurança do servidor incompleta.");
@@ -96,7 +85,7 @@ public class AuthController : ControllerBase
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(authClaims),
-                Expires = DateTime.UtcNow.AddHours(3), // Usar UtcNow para expiração
+                Expires = DateTime.UtcNow.AddHours(3),
                 Issuer = _configuration["JWT:ValidIssuer"],
                 Audience = _configuration["JWT:ValidAudience"],
                 SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256Signature)
@@ -125,24 +114,16 @@ public class AuthController : ControllerBase
         var user = await _userManager.FindByEmailAsync(model.Email!);
         if (user == null)
         {
-            // Não revele que o usuário não existe.
             _logger.LogInformation("Solicitação de reset de senha para email (não encontrado ou não revelado) {Email}.", model.Email);
             return Ok(new { Message = "Se o seu email estiver cadastrado em nosso sistema, você receberá um link para redefinir sua senha." });
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-        
-        // Obter a URL base do frontend das configurações ou definir um padrão para desenvolvimento
-        var frontendBaseUrl = _configuration["FrontendApp:BaseUrl"] ?? "http://localhost:5173"; // Porta padrão do Vite
+        var frontendBaseUrl = _configuration["FrontendApp:BaseUrl"] ?? "http://localhost:5173";
         var resetLink = $"{frontendBaseUrl}/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(user.Email!)}";
-
-        // TODO: Implementar lógica real de envio de email com o 'resetLink'
-        // Exemplo: await _emailSender.SendPasswordResetLinkAsync(user.Email, resetLink);
 
         _logger.LogInformation("Link de reset de senha gerado para {Email}. Link (DEV ONLY): {Link}", user.Email, resetLink);
 
-        // Em produção, você não retornaria o link ou o token.
-        // A mensagem deve ser sempre genérica.
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
             return Ok(new {
@@ -161,15 +142,10 @@ public class AuthController : ControllerBase
         var user = await _userManager.FindByEmailAsync(model.Email!);
         if (user == null)
         {
-            // Não revele que o usuário não existe.
             _logger.LogWarning("Tentativa de reset de senha falhou para email (não encontrado ou não revelado) {Email}.", model.Email);
             return BadRequest(new { Message = "Não foi possível redefinir a senha. O link pode ser inválido ou ter expirado." });
         }
-
-        // O token precisa ser decodificado se foi modificado (ex: espaços viraram '+')
-        // Uri.UnescapeDataString(model.Token!) pode ser necessário se o token tiver caracteres especiais
-        // que foram codificados na URL e depois decodificados incorretamente pelo model binding.
-        // Normalmente, o model binding lida com isso, mas é um ponto a observar.
+        
         var result = await _userManager.ResetPasswordAsync(user, model.Token!, model.NewPassword!);
 
         if (result.Succeeded)
@@ -180,7 +156,45 @@ public class AuthController : ControllerBase
 
         var errors = result.Errors.Select(e => e.Description).ToList();
         _logger.LogWarning("Falha ao resetar senha para {Email}: {Errors}", model.Email, errors);
-        // Não retorne todos os erros detalhados do Identity para o cliente por segurança, a menos que sejam genéricos.
         return BadRequest(new { Message = "Não foi possível redefinir a senha. Verifique se a nova senha atende aos critérios ou tente novamente.", Errors = errors });
+    }
+
+    [Authorize]
+    [HttpPost("/account/change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        // Obter o usuário logado (pelo token JWT)
+        // O ClaimTypes.NameIdentifier contém o ID do usuário que foi colocado no token durante o login.
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            _logger.LogWarning("ChangePassword: Tentativa de mudança de senha sem UserID no token.");
+            return Unauthorized(new { Message = "Usuário não autenticado corretamente."});
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            _logger.LogWarning("ChangePassword: Usuário com ID {UserId} não encontrado, mas token era válido.", userId);
+            return NotFound(new { Message = "Usuário não encontrado." }); // Ou Unauthorized
+        }
+
+        var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword!, model.NewPassword!);
+
+        if (changePasswordResult.Succeeded)
+        {
+            _logger.LogInformation("Usuário {Email} (ID: {UserId}) alterou a senha com sucesso.", user.Email, userId);
+            return Ok(new { Message = "Senha alterada com sucesso." });
+        }
+
+        var errors = changePasswordResult.Errors.Select(e => e.Description).ToList();
+        _logger.LogWarning("Falha ao alterar senha para usuário {Email} (ID: {UserId}): {Errors}",  user.Email, userId, errors);
+        // Não retorne todos os erros detalhados do Identity para o cliente por segurança, a menos que sejam genéricos.
+        return BadRequest(new { Message = "Não foi possível alterar a senha. Verifique sua senha atual e se a nova senha atende aos critérios.", Errors = errors });
     }
 }
