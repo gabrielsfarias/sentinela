@@ -17,7 +17,5 @@ public class ChangePasswordModel
     )]
     public string? NewPassword { get; set; }
 
-    [DataType(DataType.Password)]
-    [Compare("NewPassword", ErrorMessage = "A nova senha e a senha de confirmação não conferem.")]
     public string? ConfirmNewPassword { get; set; }
 }

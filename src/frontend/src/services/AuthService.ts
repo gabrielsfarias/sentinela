@@ -8,9 +8,9 @@ export interface LoginCredentials {
 }
 
 export interface ChangePasswordData {
-    currentPassword?: string;
-    newPassword?: string;
-    confirmNewPassword?: string;
+  currentPassword?: string;
+  newPassword?: string;
+  confirmNewPassword?: string;
 }
 
 export interface RegisterData {
@@ -20,14 +20,14 @@ export interface RegisterData {
 }
 
 export interface ForgotPasswordData {
-    email: string;
+  email: string;
 }
 
 export interface ResetPasswordData {
-    email: string;
-    token: string;
-    newPassword?: string;
-    // confirmNewPassword não é enviado para a API, usado apenas no frontend
+  email: string;
+  token: string;
+  newPassword?: string;
+  // confirmNewPassword não é enviado para a API, usado apenas no frontend
 }
 
 interface AuthResponse {
@@ -37,15 +37,15 @@ interface AuthResponse {
 }
 
 interface RegisterResponse {
-    message: string;
-    // Pode incluir outros dados se o backend retornar
+  message: string;
+  // Pode incluir outros dados se o backend retornar
 }
 
 interface SimpleMessageResponse {
-    message: string;
-    developmentOnlyLink?: string; // Para o link de dev no forgot password
-    developmentOnlyToken?: string; // Se o backend retornasse o token diretamente (não é o caso aqui)
-    errors?: string[]; // Para erros de validação do backend
+  message: string;
+  developmentOnlyLink?: string; // Para o link de dev no forgot password
+  developmentOnlyToken?: string; // Se o backend retornasse o token diretamente (não é o caso aqui)
+  errors?: string[]; // Para erros de validação do backend
 }
 
 // --- Configuração do Axios ---
@@ -83,15 +83,15 @@ export const register = async (data: RegisterData): Promise<RegisterResponse> =>
 };
 
 export const forgotPassword = async (data: ForgotPasswordData): Promise<SimpleMessageResponse> => {
-    const response = await axios.post<SimpleMessageResponse>(`${API_URL_PREFIX}/forgot-password`, data);
-    return response.data;
+  const response = await axios.post<SimpleMessageResponse>(`${API_URL_PREFIX}/forgot-password`, data);
+  return response.data;
 };
 
 export const resetPassword = async (data: ResetPasswordData): Promise<SimpleMessageResponse> => {
-    // O backend não espera confirmNewPassword
-    const payload = { email: data.email, token: data.token, newPassword: data.newPassword };
-    const response = await axios.post<SimpleMessageResponse>(`${API_URL_PREFIX}/reset-password`, payload);
-    return response.data;
+  // O backend não espera confirmNewPassword
+  const payload = { email: data.email, token: data.token, newPassword: data.newPassword };
+  const response = await axios.post<SimpleMessageResponse>(`${API_URL_PREFIX}/reset-password`, payload);
+  return response.data;
 };
 
 // Chamado no logout no AuthContext
@@ -100,9 +100,9 @@ export const clearAuthToken = () => {
 };
 
 export const changePassword = async (data: ChangePasswordData): Promise<SimpleMessageResponse> => {
-    // O backend não espera confirmNewPassword
-    const payload = { currentPassword: data.currentPassword, newPassword: data.newPassword };
-    // O token JWT já deve estar nos headers do axios (configurado pelo setAuthToken)
-    const response = await axios.post<SimpleMessageResponse>(`${API_URL_PREFIX}/account/change-password`, payload);
-    return response.data;
+  // O backend não espera confirmNewPassword
+  const payload = { currentPassword: data.currentPassword, newPassword: data.newPassword };
+  // O token JWT já deve estar nos headers do axios (configurado pelo setAuthToken)
+  const response = await axios.post<SimpleMessageResponse>(`${API_URL_PREFIX}/change-password`, payload);
+  return response.data;
 };

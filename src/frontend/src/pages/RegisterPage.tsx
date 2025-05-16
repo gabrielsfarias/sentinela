@@ -16,9 +16,6 @@ const RegisterPage: React.FC = () => {
     setError(null);
     setSuccessMessage(null);
 
-    console.log("Password:", password);
-    console.log("Confirm Password:", confirmPassword);
-
     if (password !== confirmPassword) {
       setError("As senhas não conferem.");
       return;
@@ -31,22 +28,22 @@ const RegisterPage: React.FC = () => {
       // Opcional: redirecionar para login após um tempo ou limpar campos
       // navigate('/login');
     } catch (err: any) {
-        if (err.response && err.response.data) {
-            if (typeof err.response.data === 'string') {
-                setError(err.response.data);
-            } else if (err.response.data.errors) { // Para erros de ModelState
-                const messages = Object.values(err.response.data.errors).flat();
-                setError(messages.join(' '));
-            } else if(err.response.data.message) {
-                 setError(err.response.data.message);
-            } else {
-                setError('Falha no cadastro. Verifique os dados.');
-            }
+      if (err.response && err.response.data) {
+        if (typeof err.response.data === 'string') {
+          setError(err.response.data);
+        } else if (err.response.data.errors) { // Para erros de ModelState
+          const messages = Object.values(err.response.data.errors).flat();
+          setError(messages.join(' '));
+        } else if (err.response.data.message) {
+          setError(err.response.data.message);
         } else {
-            setError(err.message || 'Falha no cadastro.');
+          setError('Falha no cadastro. Verifique os dados.');
         }
+      } else {
+        setError(err.message || 'Falha no cadastro.');
+      }
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 

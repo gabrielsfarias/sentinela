@@ -26,7 +26,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      '/change-password': { // Não se esqueça de adicionar a nova rota aqui também
+      '/change-password': {
         target: 'https://localhost:7292',
         changeOrigin: true,
         secure: false,
