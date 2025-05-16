@@ -21,8 +21,6 @@ public class AuthController(
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<AuthController> _logger = logger;
 
-    // ... Register, Login, ForgotPassword, ResetPassword (sem alterações) ...
-
     [HttpPost("/cadastro")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
@@ -69,9 +67,9 @@ public class AuthController(
         {
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.NameIdentifier, user.Id),
+                new(ClaimTypes.Email, user.Email!),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
             var jwtSecret = _configuration["JWT:Secret"];
@@ -160,7 +158,7 @@ public class AuthController(
     }
 
     [Authorize]
-    [HttpPost("/account/change-password")]
+    [HttpPost("/change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
     {
         if (!ModelState.IsValid)

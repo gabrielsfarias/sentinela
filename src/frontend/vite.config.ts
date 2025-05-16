@@ -7,27 +7,31 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/login': {
-        target: 'https://localhost:5177', // SUA PORTA DA API .NET (HTTPS)
+        target: 'https://localhost:7292',
         changeOrigin: true,
-        secure: false, // Necessário se a API usa certificado autoassinado em dev
+        secure: false,
       },
       '/cadastro': {
-        target: 'https://localhost:5177',
+        target: 'https://localhost:7292',
         changeOrigin: true,
         secure: false,
       },
       '/forgot-password': {
-        target: 'https://localhost:5177',
+        target: 'https://localhost:7292',
         changeOrigin: true,
         secure: false,
       },
       '/reset-password': {
-        target: 'https://localhost:5177',
+        target: 'https://localhost:7292',
         changeOrigin: true,
         secure: false,
       },
+      '/change-password': { // Não se esqueça de adicionar a nova rota aqui também
+        target: 'https://localhost:7292',
+        changeOrigin: true,
+        secure: false,
+      }
       // Adicione aqui outras rotas de API que você criar no futuro
-      // Ex: '/documents'
     }
   }
 })

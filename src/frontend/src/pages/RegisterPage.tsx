@@ -9,13 +9,16 @@ const RegisterPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  // const { register, isLoading } = useAuth(); // Se quiser usar do contexto
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMessage(null);
+
+    console.log("Password:", password);
+    console.log("Confirm Password:", confirmPassword);
+
     if (password !== confirmPassword) {
       setError("As senhas não conferem.");
       return;
