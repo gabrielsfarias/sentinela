@@ -10,7 +10,11 @@ public class ChangePasswordModel
 
     [Required(ErrorMessage = "Nova senha é obrigatória")]
     [DataType(DataType.Password)]
-    [StringLength(100, ErrorMessage = "A {0} deve ter no mínimo {2} e no máximo {1} caracteres.", MinimumLength = 6)]
+    [StringLength(
+        100,
+        ErrorMessage = "A {0} deve ter no mínimo {2} e no máximo {1} caracteres.",
+        MinimumLength = 6
+    )]
     public string? NewPassword { get; set; }
 
     [DataType(DataType.Password)]

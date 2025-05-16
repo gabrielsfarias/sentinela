@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace Backend.Models;
+
 public class ResetPasswordModel
 {
     [Required]

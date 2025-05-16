@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Data;
 
 // Removido o construtor primário duplicado e herança duplicada
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<IdentityUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<IdentityUser>(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
