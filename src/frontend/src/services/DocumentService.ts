@@ -5,9 +5,8 @@
 import axios from "axios";
 
 export interface FeDocumentDto { // Frontend-specific DTO
-    id: string; // Guid é string no JS/TS
+    id: string;
     originalFileName: string;
-    originalFileType?: string;
     originalFileSize?: number;
     originalFileLastModified?: string; // ISO Date string
     displayName: string;
@@ -19,7 +18,6 @@ export interface FeDocumentDto { // Frontend-specific DTO
 
 export interface FeCreateDocumentDto {
     originalFileName: string;
-    originalFileType?: string;
     originalFileSize?: number;
     originalFileLastModified?: string; // Date.toISOString()
     displayName?: string;

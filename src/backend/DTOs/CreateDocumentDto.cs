@@ -8,9 +8,6 @@ public class CreateDocumentDto
     [MaxLength(260)]
     public string? OriginalFileName { get; set; }
 
-    [MaxLength(100)]
-    public string? OriginalFileType { get; set; }
-
     public long? OriginalFileSize { get; set; }
     public DateTime? OriginalFileLastModified { get; set; }
 

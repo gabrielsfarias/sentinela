@@ -39,7 +39,6 @@ const DashboardPage: React.FC = () => {
 
     const metadataList: FeCreateDocumentDto[] = acceptedFiles.map(file => ({
       originalFileName: file.name,
-      originalFileType: file.type,
       originalFileSize: file.size,
       // Converta a data para string ISO ou timestamp.
       // file.lastModified é um timestamp (milisegundos desde a época).
@@ -145,7 +144,6 @@ const DashboardPage: React.FC = () => {
               <th style={{ padding: '8px' }}>Nome Exibição</th>
               <th style={{ padding: '8px' }}>Data Validade</th>
               <th style={{ padding: '8px' }}>Nome Original</th>
-              <th style={{ padding: '8px' }}>Tipo</th>
               <th style={{ padding: '8px' }}>Notas</th>
               <th style={{ padding: '8px' }}>Ações</th>
             </tr>
@@ -158,7 +156,6 @@ const DashboardPage: React.FC = () => {
                   {doc.expiryDate ? new Date(doc.expiryDate).toLocaleDateString() : 'N/A'}
                 </td>
                 <td style={{ padding: '8px' }}>{doc.originalFileName}</td>
-                <td style={{ padding: '8px' }}>{doc.originalFileType || 'N/A'}</td>
                 <td style={{ padding: '8px' }}>{doc.notes || '---'}</td>
                 <td style={{ padding: '8px' }}>
                   {/* Botões/Links de Ação (Editar/Excluir) virão aqui */}

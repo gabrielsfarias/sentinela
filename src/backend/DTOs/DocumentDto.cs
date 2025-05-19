@@ -4,7 +4,6 @@ public class DocumentDto
 {
     public Guid Id { get; set; }
     public string? OriginalFileName { get; set; }
-    public string? OriginalFileType { get; set; }
     public long? OriginalFileSize { get; set; }
     public DateTime? OriginalFileLastModified { get; set; }
     public string? DisplayName { get; set; }

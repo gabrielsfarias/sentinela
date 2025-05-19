@@ -12,22 +12,15 @@ namespace Backend.Controllers;
 [Authorize] // Todos os endpoints aqui requerem autenticação
 [ApiController]
 [Route("documentos")] // Define o prefixo da rota para este controller
-public class DocumentsController : ControllerBase
+public class DocumentsController(
+    ApplicationDbContext context,
+    UserManager<IdentityUser> userManager,
+    ILogger<DocumentsController> logger
+) : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly ILogger<DocumentsController> _logger;
-
-    public DocumentsController(
-        ApplicationDbContext context,
-        UserManager<IdentityUser> userManager,
-        ILogger<DocumentsController> logger
-    )
-    {
-        _context = context;
-        _userManager = userManager;
-        _logger = logger;
-    }
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<IdentityUser> _userManager = userManager;
+    private readonly ILogger<DocumentsController> _logger = logger;
 
     private string? GetCurrentUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -48,7 +41,6 @@ public class DocumentsController : ControllerBase
             {
                 Id = d.Id,
                 OriginalFileName = d.OriginalFileName,
-                OriginalFileType = d.OriginalFileType,
                 OriginalFileSize = d.OriginalFileSize,
                 OriginalFileLastModified = d.OriginalFileLastModified,
                 DisplayName = d.DisplayName,
@@ -101,7 +93,6 @@ public class DocumentsController : ControllerBase
             {
                 UserId = userId,
                 OriginalFileName = dto.OriginalFileName,
-                OriginalFileType = dto.OriginalFileType,
                 OriginalFileSize = dto.OriginalFileSize,
                 OriginalFileLastModified = dto.OriginalFileLastModified,
                 DisplayName = string.IsNullOrWhiteSpace(dto.DisplayName)
@@ -115,7 +106,7 @@ public class DocumentsController : ControllerBase
             createdDocuments.Add(document);
         }
 
-        if (!createdDocuments.Any())
+        if (createdDocuments.Count == 0)
         {
             return BadRequest("Nenhum documento válido para criação no lote.");
         }
@@ -135,7 +126,6 @@ public class DocumentsController : ControllerBase
             {
                 Id = d.Id,
                 OriginalFileName = d.OriginalFileName,
-                OriginalFileType = d.OriginalFileType,
                 OriginalFileSize = d.OriginalFileSize,
                 OriginalFileLastModified = d.OriginalFileLastModified,
                 DisplayName = d.DisplayName,
