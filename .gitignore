@@ -55,4 +55,3 @@ nunit-*.xml
 
 **/**/*.db*
 **/**/obj
-**/**/Properties
