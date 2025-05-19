@@ -30,6 +30,11 @@ export default defineConfig({
         target: 'https://localhost:7292',
         changeOrigin: true,
         secure: false,
+      },
+      '/documentos': {
+        target: 'https://localhost:7292',
+        changeOrigin: true,
+        secure: false,
       }
       // Adicione aqui outras rotas de API que você criar no futuro
     }
